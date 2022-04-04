@@ -1,3 +1,6 @@
+
+const lifeBar = document.getElementById('life-bar')
+
 const canvas = document.querySelector('canvas')
 const c = canvas.getContext('2d')
 
@@ -12,6 +15,7 @@ function getImage(imageSrc){
 }
 const platformImage = getImage('./assets/platform/platform.png')
 const dino = getImage('./assets/player/idle/frame-2.png')
+const dinoDizzy = getImage('./assets/player/dizzy/frame-1.png')
 const dinoJump = getImage('./assets/player/jump-up/frame.png')
 const dinoFall = getImage('./assets/player/jump-fall/frame.png')
 const dinoJumpLeft = getImage('./assets/player/jump-up-left/frame.png')
@@ -52,25 +56,29 @@ class Player {
         this.width = 60
         this.height = 60
         this.image = dino
+        this.attacked = 0
         this.life = 5
         this.scroll = 0
         this.direction = 1
+        this.recovering = 0
     }
 
     draw(){
         
-        if (this.velocity.y < 0){
-            if (this.direction > 0){
-            this.image  = dinoJump
-            } else this.image  = dinoJumpLeft
-        } else if (this.velocity.y > 0){
-            if (this.direction > 0){
-            this.image  = dinoFall
-            } else this.image  = dinoFallLeft
-        } else {
-            if (this.direction > 0){
-                this.image = dinoRun[Math.abs(this.scroll)%3]
-            } else this.image = dinoRunLeft[Math.abs(this.scroll)%3]
+        if (this.attacked > 0){
+            this.image  = dinoDizzy
+        } else  if (this.velocity.y < 0){
+                if (this.direction > 0){
+                this.image  = dinoJump
+                } else this.image  = dinoJumpLeft
+                } else if (this.velocity.y > 0){
+                    if (this.direction > 0){
+                    this.image  = dinoFall
+                    } else this.image  = dinoFallLeft
+                } else {
+                    if (this.direction > 0){
+                        this.image = dinoRun[Math.abs(this.scroll)%3]
+                    } else this.image = dinoRunLeft[Math.abs(this.scroll)%3]
             
         }
 
@@ -101,6 +109,10 @@ class Player {
             this.velocity.y = 0
         }
         
+        if (this.attacked > 0){
+            this.attacked --
+        }
+
     }
     
 }
@@ -181,35 +193,7 @@ class Platform {
             )
     }
 }
-//////////////////////////////////////////////////// Display
-class Display {
-    constructor(){
-        this.position = {
-            x:300,
-            y:300
-        }
-        this.width = 200
-        this.height = 100
-    }
 
-    draw(lifes){
-
-        c.fillRect(
-            this.position.x,
-            this.position.y,
-            this.width,
-            this.height
-            )
-        c.font = '48px serif black';    
-        c.fillText(`${lifes}`, this.width, this.height)
-
-    }
-
-    update(){
-        
-    }
-    
-}
 
 
 
@@ -217,22 +201,49 @@ class Display {
 //////////////////////////////////////////////////// Game Class
 
 class Game{
-    constructor(winPosition, level, windowWidth, windowHeight){
+    constructor(lifeBar, levelWidth, level, windowWidth, windowHeight){
+        this.lifeBar = lifeBar,
+        this.levelWidth = levelWidth,
         this.level = level,
-        this.winPosition = winPosition
-        this.windowWidth = windowWidth
-        this.windowHeight = windowHeight
+        this.windowWidth = windowWidth,
+        this.windowHeight = windowHeight,
+        this.winLose = document.querySelector('#win-lose h2')
     }
     
+
+    gameStory(){
+        this.winLose.innerText = 'You, Dino, is our best hope to transport our secret message signal to our fellows on Sky City. The city has been taken for the Mechanical Fish Gang. Try your best to keep safe and travel as fast as you can. We are counting on you. You can run, you can fly, you can touch the sky!'
+        setTimeout(()=>{
+            this.winLose.innerText = ''
+        },10000)
+    }
+
     start(){
 
         const player = new Player()
-        const display = new Display()
+        this.winLose.innerText = 'Run Dino! Run!'
+        setTimeout(()=>{
+            this.winLose.innerText = ''
+        },700)
+        setTimeout(()=>{
+            this.winLose.innerText = 'Run Dino! Run!'
+        },1400)
+        this.winLose.innerText = 'Run Dino! Run!'
+        setTimeout(()=>{
+            this.winLose.innerText = ''
+        },2100)
+
+        // lifeBar construction
+        for (i=0;i<player.life;i++){
+            const lifeImage = document.createElement("img")
+            lifeBar.appendChild(lifeImage)
+        }
+
         const enemies = []
-        for(i=0; i< this.level*10; i++){
+        for(i=0; i< this.level*15; i++){
             enemies.push(
                 new Enemy({
-                    x:Math.floor(this.winPosition * Math.random()),
+                    x:Math.floor(this.levelWidth * Math.random()),
                     y:Math.floor(this.windowHeight * Math.random()),
                     freq:Math.floor(19 * Math.random()+ 1),
                     amplitude:Math.floor(19 * Math.random()+ 1),
@@ -245,16 +256,13 @@ class Game{
         for(i=0; i< this.level*15; i++){
             platforms.push(
                 new Platform({
-                    x:Math.floor(this.winPosition * Math.random()),
+                    x:Math.floor(this.levelWidth * Math.random()),
                     y:Math.floor(this.windowHeight * Math.random())
                     },
                     platformImage
                 )
             )
         }
-
-
-
 
         const keys = {
             right:{
@@ -265,58 +273,68 @@ class Game{
             }
         }
 
-        function animate(){
+        function animate(level){
             
-            requestAnimationFrame(animate)
-            c.clearRect(0,0,canvas.width,canvas.height)
-            platforms.forEach(platform =>{
-                platform.draw()
-            })
-            enemies.forEach(enemy =>{
-                enemy.update()
-            })
-            player.update()
-            display.draw()
+            if (player.life > 0 && player.scroll <= 500){
+                requestAnimationFrame(animate)
+                c.clearRect(0,0,canvas.width,canvas.height)
+                platforms.forEach(platform =>{
+                    platform.draw()
+                })
+                enemies.forEach(enemy =>{
+                    enemy.update()
+                })
+                player.update()
 
 
-            if (keys.left.pressed && player.position.x >= 100){
-                player.velocity.x = -5
-            } else if (keys.right.pressed && player.position.x <= 400){
-                player.velocity.x = 5
-            } else {
-                player.velocity.x = 0
-                if (keys.left.pressed){
-                    platforms.forEach(platform =>{
-                        platform.position.x += 5
-                    })
-                    
-                } else if (keys.right.pressed){
-                    platforms.forEach(platform =>{
-                        platform.position.x -= 5
-                    })
-                } 
-            }
-            // player vs platform collision handling
-            platforms.forEach(platform =>{
-                if ((player.position.y + player.height <= platform.position.y) && 
-                (player.position.y + player.height + player.velocity.y >= platform.position.y) &&
-                (player.position.x + player.width >= platform.position.x) &&
-                (player.position.x <= platform.position.x + platform.width)){
-                    player.velocity.y = 0
+                if (keys.left.pressed && player.position.x >= 100){
+                    player.velocity.x = -5
+                } else if (keys.right.pressed && player.position.x <= 400){
+                    player.velocity.x = 5
+                } else {
+                    player.velocity.x = 0
+                    if (keys.left.pressed){
+                        platforms.forEach(platform =>{
+                            platform.position.x += 5
+                        })
+                        
+                    } else if (keys.right.pressed){
+                        platforms.forEach(platform =>{
+                            platform.position.x -= 5
+                        })
+                    } 
                 }
-            })
+                
+                // player vs platform collision handling
+                platforms.forEach(platform =>{
+                    if ((player.position.y + player.height <= platform.position.y) && 
+                    (player.position.y + player.height + player.velocity.y >= platform.position.y) &&
+                    (player.position.x + player.width >= platform.position.x) &&
+                    (player.position.x <= platform.position.x + platform.width)){
+                        player.velocity.y = 0
+                    }
+                })
 
-            enemies.forEach(enemy =>{
-                if ((Math.abs((player.position.y + player.height*0.5)-(enemy.position.y + enemy.height*0.5)) < 40)&&(Math.abs((player.position.x + player.width*0.5)-(enemy.position.x + enemy.width*0.5)) < 40)){
-                    player.life --
-                    console.log('life',player.life)
-                }
-            })
-            
+                // character vs enemy interaction 
+                enemies.forEach(enemy =>{
+                    if ((player.recovering==0)&&(Math.abs((player.position.y + player.height*0.5)-(enemy.position.y + enemy.height*0.5)) < 40)&&(Math.abs((player.position.x + player.width*0.5)-(enemy.position.x + enemy.width*0.5)) < 40)){
+                        player.life --
+                        player.attacked = 4
+                        console.log('life',player.life)
+                        lifeBar.removeChild(document.getElementById('life-bar').childNodes[0])
+                        player.recovering = 1
+                        setTimeout(()=>{
+                            player.recovering = 0
+                        },500)
+                    }
+                })
+            } else if (player.life < 1){
+                game.winLose.innerText = 'Oh, no! The Mechanical Fish Gang has captured you and your message this time.';
+            } else game.winLose.innerText = 'Congrats! You are safe, and so the plannet. But will you be able to keep us safe next time?';
         }
-
-        animate()
-
+        
+        animate(this.level)
+        
         window.addEventListener('keydown', (event)=>{
             console.log(event)
             switch (event.keyCode){
@@ -390,5 +408,5 @@ class Game{
 
 }
 
-const game = new Game(8000,3,canvas.width,canvas.height)
+const game = new Game(lifeBar, 10000, 3,canvas.width,canvas.height)
 game.start()

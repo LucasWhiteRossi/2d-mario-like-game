@@ -212,10 +212,38 @@ class Game{
     
 
     gameStory(){
-        this.winLose.innerText = 'You, Dino, is our best hope to transport our secret message signal to our fellows on Sky City. The city has been taken for the Mechanical Fish Gang. Try your best to keep safe and travel as fast as you can. We are counting on you. You can run, you can fly, you can touch the sky!'
+        const presentation1 = 'Dino, you are our hope to transport our secret message signal to our fellows on Sky City.'
+        const presentation2 = 'The city has been taken for the Mechanical Fish Gang. Avoid their members at all costs. Travel RIGHT as fast as you can!!! Our safe place is near.'
+        const presentation3 = 'You can run with directional keys (⬅ ➡), you can jump with SPACE, and even fly with SPACE again!'
+        presentation1.split(' ').forEach((word,index)=>{
+            setTimeout(()=>{
+                this.winLose.innerText = this.winLose.innerText + ' ' + word
+            },250*index)
+        })
+
         setTimeout(()=>{
             this.winLose.innerText = ''
-        },10000)
+        },7000 )
+
+        presentation2.split(' ').forEach((word,index)=>{
+            setTimeout(()=>{
+                this.winLose.innerText = this.winLose.innerText + ' ' + word
+            },7000 + 250*index)
+        })
+        
+        setTimeout(()=>{
+            this.winLose.innerText = ''
+        },15000 )
+
+        presentation3.split(' ').forEach((word,index)=>{
+            setTimeout(()=>{
+                this.winLose.innerText = this.winLose.innerText + ' ' + word
+            },15000 + 250*index)
+        })
+        setTimeout(()=>{
+            this.winLose.innerText = ''
+            this.start()
+        },21000)
     }
 
     start(){
@@ -263,6 +291,7 @@ class Game{
                 )
             )
         }
+        
 
         const keys = {
             right:{
@@ -330,7 +359,7 @@ class Game{
                 })
             } else if (player.life < 1){
                 game.winLose.innerText = 'Oh, no! The Mechanical Fish Gang has captured you and your message this time.';
-            } else game.winLose.innerText = 'Congrats! You are safe, and so the plannet. But will you be able to keep us safe next time?';
+            } else game.winLose.innerText = "Congrats! You've reached our safe zone, transmited our signal and saved our people! But will you be able to keep us safe next time?"
         }
         
         animate(this.level)
@@ -409,4 +438,5 @@ class Game{
 }
 
 const game = new Game(lifeBar, 10000, 3,canvas.width,canvas.height)
-game.start()
+game.gameStory()
+//game.start()

@@ -1,0 +1,11 @@
+h1{
+    color: green;
+}
+
+canvas{
+    background-image: url('../assets/platform/sky.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-color: rgba(255, 255, 255, 0);
+}
+

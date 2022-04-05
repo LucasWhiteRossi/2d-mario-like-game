@@ -19,13 +19,8 @@ function getImage(imageSrc){
     return image
 }
 
-function getSound(soundSrc){
-    const sound = new Audio()
-    sound.src = soundSrc
-    return sound
-}
-
 const platformImage = getImage('./assets/platform/platform.png')
+const computer = getImage('./assets/platform/computer-wall.png')
 const dino = getImage('./assets/player/idle/frame-2.png')
 const dinoDizzy = getImage('./assets/player/dizzy/frame-1.png')
 const dinoJump = getImage('./assets/player/jump-up/frame.png')
@@ -42,8 +37,6 @@ const dinoRun3L = getImage('./assets/player/run-left/frame-3.png')
 const dinoRun4L = getImage('./assets/player/run-left/frame-4.png')
 const dinoRun = [dinoRun1, dinoRun2, dinoRun3, dinoRun4]
 const dinoRunLeft = [dinoRun1L, dinoRun2L, dinoRun3L, dinoRun4L]
-const jumpSound = getSound('./assets/sound-effects/jump-sound.mp3')
-const gameMusic = getSound('./assets/sound-effects/game-music.mp3')
 
 const enemyImg = []
 for (i=0; i<10; i++){
@@ -51,6 +44,19 @@ for (i=0; i<10; i++){
         enemyImg.push(getImage(`./assets/bluebat/skeleton-fly_0${i}.png`))
     } else enemyImg.push(getImage(`./assets/bluebat/skeleton-fly_${10}.png`))
 }
+
+// Loading Audio
+function getSound(soundSrc){
+    const sound = new Audio()
+    sound.src = soundSrc
+    return sound
+}
+const jumpSound = getSound('./assets/sound-effects/jump-sound.mp3')
+const successSoud = getSound('./assets/sound-effects/success.mp3')
+const gameMusic = getSound('./assets/sound-effects/game-music.mp3')
+const damage = getSound('./assets/sound-effects/damage.mp3')
+
+
 
 
 
@@ -180,7 +186,7 @@ class Enemy {
 
 /////////////////////////////////////////////////////////  Platform Class
 class Platform {
-    constructor({ x , y},image, winninPlatform=0){
+    constructor({ x , y},image){
         this.position = {
             x: x,
             y: y
@@ -188,7 +194,7 @@ class Platform {
         this.image = image;
         this.width = 500;
         this.height = 50;
-        this.winninPlatform = winninPlatform;
+        this.winninPlatform = 0;
     }
 
     draw(){
@@ -284,6 +290,7 @@ class Game{
             lifeBar.appendChild(lifeImage)
         }
 
+        // Distribution enemies 
         const enemies = []
         for(i=0; i< this.level*15; i++){
             enemies.push(
@@ -297,6 +304,7 @@ class Game{
             )
         }    
         
+        // Distributiong platforms
         const platforms = []
         for(i=0; i< this.level*15; i++){
             platforms.push(
@@ -308,7 +316,17 @@ class Game{
                 )
             )
         }
-        
+        const finalPlatform = new Platform({
+            x:this.levelWidth,
+            y:300
+            },
+            computer
+        )
+        finalPlatform.winninPlatform = 1
+        finalPlatform.width = 200
+        finalPlatform.height = 200
+
+        platforms.push(finalPlatform)
 
         const keys = {
             right:{
@@ -320,9 +338,9 @@ class Game{
         }
 
         function animate(level){
-            
+
             const messageArea = document.querySelector('#message-area h2')
-            if (player.life > 0 && player.scroll <= 500){
+            if (player.life > 0 && player.position.x < finalPlatform.position.x){
                 requestAnimationFrame(animate)
                 c.clearRect(0,0,canvas.width,canvas.height)
                 platforms.forEach(platform =>{
@@ -367,6 +385,7 @@ class Game{
                     if ((player.recovering==0)&&(Math.abs((player.position.y + player.height*0.5)-(enemy.position.y + enemy.height*0.5)) < 40)&&(Math.abs((player.position.x + player.width*0.5)-(enemy.position.x + enemy.width*0.5)) < 40)){
                         player.life --
                         player.attacked = 4
+                        damage.play()
                         console.log('life',player.life)
                         lifeBar.removeChild(document.getElementById('life-bar').childNodes[0])
                         player.recovering = 1
@@ -377,7 +396,10 @@ class Game{
                 })
             } else if (player.life < 1){
                 messageArea.innerText = 'Oh, no! The Mechanical Fish Gang captured you and your message this time.';
-            } else messageArea.innerText = "Congratulations! You have reached our safe zone, transmitted our signal and saved our people! But will you be able to keep us safe next time?"
+            } else {
+                messageArea.innerText = "Congratulations! You have reached our safe zone, transmitted our signal and saved our people! But will you be able to keep us safe next time?"
+                successSoud.play()
+            }
         }
         
         animate(this.level)

@@ -43,7 +43,6 @@ h1{
     font: 1.3rem Inconsolata, monospace;
     color: rgb(245, 241, 14);
     border-radius: 5px;
-    padding: 30 px;
     text-align: left;
 }
 
@@ -83,4 +82,12 @@ button {
 #start, #intro{
     font-size: 20px;
     padding: 0 10px;
+}
+
+.front-image{
+    background-image: url('../assets/player/run/frame-1.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    width: 300px;
+    height: 300px;
 }

@@ -5,7 +5,7 @@ const introButton = document.querySelector('#intro')
 const levelDisplay = document.querySelector('#current-level')
 const levelUp = document.querySelector('#level-up')
 const levelDown = document.querySelector('#level-down')
-
+const frontImage = document.querySelector('#front-image')
 const canvas = document.querySelector('canvas')
 const c = canvas.getContext('2d')
 
@@ -463,6 +463,7 @@ startButton.addEventListener("mousedown",()=>{
     while(lifeBar.childElementCount>0){
         lifeBar.removeChild(document.getElementById('life-bar').childNodes[0])
     }
+    frontImage.classList.toggle('front-image')
     game.start()
 })
 
@@ -471,5 +472,6 @@ introButton.addEventListener("mousedown",()=>{
     while(lifeBar.childElementCount>0){
         lifeBar.removeChild(document.getElementById('life-bar').childNodes[0])
     }
+    frontImage.classList.toggle('front-image')
     game.gameStory()
 })

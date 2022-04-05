@@ -1,4 +1,4 @@
-# Run Dino... RUn
+# Run Dino... Run
 This is a 2d short "Super Mario like" game developed using HTML Canvas and Javascript Vanilla. 
 
 Story:
@@ -16,3 +16,6 @@ https://creativecommons.org/licenses/by/4.0/
 
 Special thanks:
 Some youtube tutorial videos of Franks laboratory and Chris Courses channels were particularly instructive for this project.
+
+Presentation:
+<a href='https://docs.google.com/presentation/d/1lUPoorHCMCEogIhGr8kJjVNU2yeJhk6k0Mro9mFV_SQ/edit?usp=sharing'>Presentation Link</a>

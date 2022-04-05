@@ -18,6 +18,13 @@ function getImage(imageSrc){
     image.src = imageSrc
     return image
 }
+
+function getSound(soundSrc){
+    const sound = new Audio()
+    sound.src = soundSrc
+    return sound
+}
+
 const platformImage = getImage('./assets/platform/platform.png')
 const dino = getImage('./assets/player/idle/frame-2.png')
 const dinoDizzy = getImage('./assets/player/dizzy/frame-1.png')
@@ -35,6 +42,8 @@ const dinoRun3L = getImage('./assets/player/run-left/frame-3.png')
 const dinoRun4L = getImage('./assets/player/run-left/frame-4.png')
 const dinoRun = [dinoRun1, dinoRun2, dinoRun3, dinoRun4]
 const dinoRunLeft = [dinoRun1L, dinoRun2L, dinoRun3L, dinoRun4L]
+const jumpSound = getSound('./assets/sound-effects/jump-sound.mp3')
+const gameMusic = getSound('./assets/sound-effects/game-music.mp3')
 
 const enemyImg = []
 for (i=0; i<10; i++){
@@ -217,9 +226,12 @@ class Game{
     
 
     gameStory(){
-        const presentation1 = 'Dino, you are our hope to transport our secret message signal to our fellows on Sky City.'
+        const presentation1 = 'Dino, you are our hope to carry our secret message signal to our comrades in Sky City.'
         const presentation2 = 'The city has been taken for the Mechanical Fish Gang. Avoid their members at all costs. Travel RIGHT as fast as you can!!! Our safe place is near.'
-        const presentation3 = 'You can run with directional keys (⬅ ➡), you can jump with SPACE, and even fly with SPACE again!'
+        const presentation3 = 'You can run with directional keys (⬅ ➡), jump with SPACE, and even fly with SPACE again!'
+        
+        this.messageArea.innerText = ''
+        
         presentation1.split(' ').forEach((word,index)=>{
             setTimeout(()=>{
                 this.messageArea.innerText = this.messageArea.innerText + ' ' + word
@@ -364,8 +376,8 @@ class Game{
                     }
                 })
             } else if (player.life < 1){
-                messageArea.innerText = 'Oh, no! The Mechanical Fish Gang has captured you and your message this time.';
-            } else messageArea.innerText = "Congrats! You've reached our safe zone, transmited our signal and saved our people! But will you be able to keep us safe next time?"
+                messageArea.innerText = 'Oh, no! The Mechanical Fish Gang captured you and your message this time.';
+            } else messageArea.innerText = "Congratulations! You have reached our safe zone, transmitted our signal and saved our people! But will you be able to keep us safe next time?"
         }
         
         animate(this.level)
@@ -400,6 +412,7 @@ class Game{
             case 32:
                 console.log('space')
                 player.velocity.y += -10
+                jumpSound.play()
                 break
             
             case 13:
@@ -463,7 +476,8 @@ startButton.addEventListener("mousedown",()=>{
     while(lifeBar.childElementCount>0){
         lifeBar.removeChild(document.getElementById('life-bar').childNodes[0])
     }
-    frontImage.classList.toggle('front-image')
+    frontImage.classList.remove('front-image')
+    gameMusic.play()
     game.start()
 })
 
@@ -472,6 +486,7 @@ introButton.addEventListener("mousedown",()=>{
     while(lifeBar.childElementCount>0){
         lifeBar.removeChild(document.getElementById('life-bar').childNodes[0])
     }
-    frontImage.classList.toggle('front-image')
+    frontImage.classList.remove('front-image')
+    gameMusic.play()
     game.gameStory()
 })

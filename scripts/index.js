@@ -1,11 +1,16 @@
 
 const lifeBar = document.getElementById('life-bar')
+const startButton = document.querySelector('#start')
+const introButton = document.querySelector('#intro')
+const levelDisplay = document.querySelector('#current-level')
+const levelUp = document.querySelector('#level-up')
+const levelDown = document.querySelector('#level-down')
 
 const canvas = document.querySelector('canvas')
 const c = canvas.getContext('2d')
 
 canvas.width = innerWidth
-canvas.height = innerHeight
+canvas.height = innerHeight * 0.8
 
 // Loading Images
 function getImage(imageSrc){
@@ -207,7 +212,7 @@ class Game{
         this.level = level,
         this.windowWidth = windowWidth,
         this.windowHeight = windowHeight,
-        this.winLose = document.querySelector('#win-lose h2')
+        this.messageArea = document.querySelector('#message-area h2')
     }
     
 
@@ -217,31 +222,31 @@ class Game{
         const presentation3 = 'You can run with directional keys (⬅ ➡), you can jump with SPACE, and even fly with SPACE again!'
         presentation1.split(' ').forEach((word,index)=>{
             setTimeout(()=>{
-                this.winLose.innerText = this.winLose.innerText + ' ' + word
+                this.messageArea.innerText = this.messageArea.innerText + ' ' + word
             },250*index)
         })
 
         setTimeout(()=>{
-            this.winLose.innerText = ''
+            this.messageArea.innerText = ''
         },7000 )
 
         presentation2.split(' ').forEach((word,index)=>{
             setTimeout(()=>{
-                this.winLose.innerText = this.winLose.innerText + ' ' + word
+                this.messageArea.innerText = this.messageArea.innerText + ' ' + word
             },7000 + 250*index)
         })
         
         setTimeout(()=>{
-            this.winLose.innerText = ''
+            this.messageArea.innerText = ''
         },15000 )
 
         presentation3.split(' ').forEach((word,index)=>{
             setTimeout(()=>{
-                this.winLose.innerText = this.winLose.innerText + ' ' + word
+                this.messageArea.innerText = this.messageArea.innerText + ' ' + word
             },15000 + 250*index)
         })
         setTimeout(()=>{
-            this.winLose.innerText = ''
+            this.messageArea.innerText = ''
             this.start()
         },21000)
     }
@@ -249,16 +254,16 @@ class Game{
     start(){
 
         const player = new Player()
-        this.winLose.innerText = 'Run Dino! Run!'
+        this.messageArea.innerText = 'Run Dino! Run!'
         setTimeout(()=>{
-            this.winLose.innerText = ''
+            this.messageArea.innerText = ''
         },700)
         setTimeout(()=>{
-            this.winLose.innerText = 'Run Dino! Run!'
+            this.messageArea.innerText = 'Run Dino! Run!'
         },1400)
-        this.winLose.innerText = 'Run Dino! Run!'
+        this.messageArea.innerText = 'Run Dino! Run!'
         setTimeout(()=>{
-            this.winLose.innerText = ''
+            this.messageArea.innerText = ''
         },2100)
 
         // lifeBar construction
@@ -304,6 +309,7 @@ class Game{
 
         function animate(level){
             
+            const messageArea = document.querySelector('#message-area h2')
             if (player.life > 0 && player.scroll <= 500){
                 requestAnimationFrame(animate)
                 c.clearRect(0,0,canvas.width,canvas.height)
@@ -358,8 +364,8 @@ class Game{
                     }
                 })
             } else if (player.life < 1){
-                game.winLose.innerText = 'Oh, no! The Mechanical Fish Gang has captured you and your message this time.';
-            } else game.winLose.innerText = "Congrats! You've reached our safe zone, transmited our signal and saved our people! But will you be able to keep us safe next time?"
+                messageArea.innerText = 'Oh, no! The Mechanical Fish Gang has captured you and your message this time.';
+            } else messageArea.innerText = "Congrats! You've reached our safe zone, transmited our signal and saved our people! But will you be able to keep us safe next time?"
         }
         
         animate(this.level)
@@ -437,6 +443,33 @@ class Game{
 
 }
 
-const game = new Game(lifeBar, 10000, 3,canvas.width,canvas.height)
-game.gameStory()
-//game.start()
+let level = 3
+levelDisplay.innerText = `Level: ${level}`
+
+levelUp.addEventListener("mousedown",()=>{
+    level++
+    levelDisplay.innerText = `Level: ${level}`
+})
+
+levelDown.addEventListener("mousedown",()=>{
+    if (level > 1){
+    level--
+    levelDisplay.innerText = `Level: ${level}`
+    }
+})
+
+startButton.addEventListener("mousedown",()=>{
+    const game = new Game(lifeBar, 10000, level,canvas.width, canvas.height)
+    while(lifeBar.childElementCount>0){
+        lifeBar.removeChild(document.getElementById('life-bar').childNodes[0])
+    }
+    game.start()
+})
+
+introButton.addEventListener("mousedown",()=>{
+    const game = new Game(lifeBar, 10000, level,canvas.width, canvas.height)
+    while(lifeBar.childElementCount>0){
+        lifeBar.removeChild(document.getElementById('life-bar').childNodes[0])
+    }
+    game.gameStory()
+})

@@ -1,7 +1,10 @@
 # Run Dino... Run
+
 <p>
 This is a 2d short "Super Mario like" game developed using HTML Canvas and Javascript Vanilla. 
 </p>
+<p><strong>To play the game:</strong></p>
+<p><a href="https://lucaswhiterossi.github.io/2d-mario-like-game/">https://lucaswhiterossi.github.io/2d-mario-like-game/</a></p>
 
 ## Story:
 Sky City was taken over by the evil Mechanical Fish Gang. Our rebel resistance is still acting there, but our communication has been lost and Dino was assigned to restore the signal and transmit the secret plans. He must travel as fast as he can through the enemy's soil avoiding direct contact with any of the gang members.
@@ -27,5 +30,6 @@ Attribution 4.0 International (CC BY 4.0)
 Some youtube tutorial videos of Franks laboratory and Chris Courses channels were particularly instructive for this project.
 </p>
 <hr>
+
 ### Presentation:
 <a href='https://docs.google.com/presentation/d/1lUPoorHCMCEogIhGr8kJjVNU2yeJhk6k0Mro9mFV_SQ/edit?usp=sharing'>Presentation Link</a>

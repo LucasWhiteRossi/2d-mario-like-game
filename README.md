@@ -25,6 +25,7 @@ Attribution 4.0 International (CC BY 4.0)
 <a href="https://creativecommons.org/licenses/by/4.0/">https://creativecommons.org/licenses/by/4.0/</a>
 </p>
 <hr>
+
 ### Special thanks:
 <p>
 Some youtube tutorial videos of Franks laboratory and Chris Courses channels were particularly instructive for this project.

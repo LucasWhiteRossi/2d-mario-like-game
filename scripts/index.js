@@ -12,13 +12,6 @@ const c = canvas.getContext('2d')
 canvas.width = innerWidth
 canvas.height = innerHeight * 0.8
 
-// Loading Images
-function getImage(imageSrc){
-    const image = new Image()
-    image.src = imageSrc
-    return image
-}
-
 const platformImage = getImage('./assets/platform/platform.png')
 const computer = getImage('./assets/platform/computer-wall.png')
 const dino = getImage('./assets/player/idle/frame-2.png')
@@ -37,6 +30,10 @@ const dinoRun3L = getImage('./assets/player/run-left/frame-3.png')
 const dinoRun4L = getImage('./assets/player/run-left/frame-4.png')
 const dinoRun = [dinoRun1, dinoRun2, dinoRun3, dinoRun4]
 const dinoRunLeft = [dinoRun1L, dinoRun2L, dinoRun3L, dinoRun4L]
+const jumpSound = getSound('./assets/sound-effects/jump-sound.mp3')
+const successSoud = getSound('./assets/sound-effects/success.mp3')
+const gameMusic = getSound('./assets/sound-effects/game-music.mp3')
+const damage = getSound('./assets/sound-effects/damage.mp3')
 
 const enemyImg = []
 for (i=0; i<10; i++){
@@ -45,24 +42,21 @@ for (i=0; i<10; i++){
     } else enemyImg.push(getImage(`./assets/bluebat/skeleton-fly_${10}.png`))
 }
 
-// Loading Audio
+function getImage(imageSrc){
+    const image = new Image()
+    image.src = imageSrc
+    return image
+}
+
 function getSound(soundSrc){
     const sound = new Audio()
     sound.src = soundSrc
     return sound
 }
-const jumpSound = getSound('./assets/sound-effects/jump-sound.mp3')
-const successSoud = getSound('./assets/sound-effects/success.mp3')
-const gameMusic = getSound('./assets/sound-effects/game-music.mp3')
-const damage = getSound('./assets/sound-effects/damage.mp3')
-
-
-
-
 
 const gravity = 0.25
 
-///////////////////////////////////////////////////////// Player Class
+
 class Player {
     constructor(){
         this.position = {
@@ -99,7 +93,6 @@ class Player {
                     if (this.direction > 0){
                         this.image = dinoRun[Math.abs(this.scroll)%3]
                     } else this.image = dinoRunLeft[Math.abs(this.scroll)%3]
-            
         }
 
         c.fillRect(
@@ -132,12 +125,10 @@ class Player {
         if (this.attacked > 0){
             this.attacked --
         }
-
     }
-    
 }
 
-///////////////////////////////////////////////////////// Enemy class
+
 class Enemy {
     constructor({x,y,freq,amplitude,speed}){
         this.position = {
@@ -152,7 +143,6 @@ class Enemy {
         this.speed = speed
         this.life = 1
     }
-    
 
     draw(){
         this.image = enemyImg[Math.floor(Math.abs(this.position.x)%10)]
@@ -184,7 +174,6 @@ class Enemy {
 }
 
 
-/////////////////////////////////////////////////////////  Platform Class
 class Platform {
     constructor({ x , y},image){
         this.position = {
@@ -215,11 +204,6 @@ class Platform {
 }
 
 
-
-
-
-//////////////////////////////////////////////////// Game Class
-
 class Game{
     constructor(lifeBar, levelWidth, level, windowWidth, windowHeight){
         this.lifeBar = lifeBar,
@@ -229,7 +213,6 @@ class Game{
         this.windowHeight = windowHeight,
         this.messageArea = document.querySelector('#message-area h2')
     }
-    
 
     gameStory(){
         const presentation1 = 'Dino, you are our hope to carry our secret message signal to our comrades in Sky City.'
@@ -270,7 +253,6 @@ class Game{
     }
 
     start(){
-
         const player = new Player()
         this.messageArea.innerText = 'Run Dino! Run!'
         setTimeout(()=>{
@@ -351,7 +333,6 @@ class Game{
                 })
                 player.update()
 
-
                 if (keys.left.pressed && player.position.x >= 100){
                     player.velocity.x = -5
                 } else if (keys.right.pressed && player.position.x <= 400){
@@ -405,72 +386,68 @@ class Game{
         animate(this.level)
         
         window.addEventListener('keydown', (event)=>{
-            console.log(event)
             switch (event.keyCode){
             case 37:
-                console.log('left')
+                //'left'
                 keys.left.pressed = true
                 player.scroll --
-                console.log('scroll', player.scroll)
                 player.direction = -1
                 break
             
             case 39:
-                console.log('right')
+                //'right'
                 keys.right.pressed = true
                 player.scroll ++
-                console.log('scroll', player.scroll)
                 player.direction = 1
                 break
             
             case 38:
-                console.log('up')
+                //'up'
                 break
             
             case 40:
-                console.log('down')
+                //'down'
                 break
 
             case 32:
-                console.log('space')
+                //'space'
                 player.velocity.y += -10
                 jumpSound.play()
                 break
             
             case 13:
-                console.log('enter')
+                //'enter'
                 break
 
             }
         })
 
         window.addEventListener('keyup', (event)=>{
-            console.log(event)
             switch (event.keyCode){
             case 37:
-                console.log('left')
+                //'left'
                 keys.left.pressed = false
                 break
             
             case 39:
-                console.log('right')
+                //'right'
                 keys.right.pressed = false
                 break
             
             case 38:
-                console.log('up')
+                //'up'
                 break
             
             case 40:
-                console.log('down')
+                //'down'
                 break
 
             case 32:
-                console.log('space')
+                //'space'
                 break
             
             case 13:
-                console.log('enter')
+                //'enter'
                 break
             }
         })
